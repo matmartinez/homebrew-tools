@@ -31,22 +31,25 @@ class MdnsReflector < Formula
     (bin/"mdns-reflector-service").write <<~SH
       #!/bin/bash
       set -euo pipefail
-  
+      
       CONF="#{etc}/mdns-reflector.conf"
-      interfaces=( )
-      extraFlags=( )
-  
+      
+      interfaces=""
+      extraFlags=""
       if [[ -f "$CONF" ]]; then
         # shellcheck disable=SC1090
         source "$CONF"
       fi
-  
-      # Defaults if config didn't set anything
-      if [[ ${#interfaces[@]} -eq 0 ]]; then
-        interfaces=( "en0" "bridge100" )
-      fi
-  
-      exec "#{opt_bin}/mdns-reflector" ${extraFlags[@]+"${extraFlags[@]}"} -fn ${interfaces[@]+"${interfaces[@]}"}
+      
+      # shellcheck disable=SC2206
+      interfaces_args=(${interfaces:-"en0 bridge100"})
+      # shellcheck disable=SC2206
+      extra_args=(${extraFlags:-})
+      
+      exec "#{opt_bin}/mdns-reflector" \
+        "${extra_args[@]}" \
+        -fn \
+        "${interfaces_args[@]}"
     SH
     chmod 0755, bin/"mdns-reflector-service"
   end
