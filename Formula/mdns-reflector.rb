@@ -14,10 +14,46 @@ class MdnsReflector < Formula
       system "cmake", "--build", "."
       system "cmake", "--install", "."
     end
+  
+    # Create a default config on first install (user can edit later)
+    conf = etc/"mdns-reflector.conf"
+    unless conf.exist?
+      conf.write <<~EOS
+        # mdns-reflector Homebrew service configuration
+        # Space-separated network interfaces (first is the "from", the rest are "to")
+        interfaces="en0 bridge100"
+        # Optional extra flags, e.g. "-4 -f"
+        extraFlags=""
+      EOS
+    end
+  
+    # Wrapper that reads the config and starts the daemon with those args
+    (bin/"mdns-reflector-service").write <<~SH
+      #!/bin/bash
+      set -euo pipefail
+  
+      CONF="#{etc}/mdns-reflector.conf"
+      interfaces=( )
+      extraFlags=( )
+  
+      if [[ -f "$CONF" ]]; then
+        # shellcheck disable=SC1090
+        source "$CONF"
+      fi
+  
+      # Defaults if config didn't set anything
+      if [[ ${#interfaces[@]} -eq 0 ]]; then
+        interfaces=( "en0" "bridge100" )
+      fi
+  
+      exec "#{opt_bin}/mdns-reflector" ${extraFlags[@]+"${extraFlags[@]}"} -fn ${interfaces[@]+"${interfaces[@]}"}
+    SH
+    chmod 0755, bin/"mdns-reflector-service"
   end
   
   service do
-    run [opt_bin/"mdns-reflector", "-fn", "en0", "bridge100"]
+    # Run the wrapper so changes in etc/mdns-reflector.conf take effect on restart
+    run [opt_bin/"mdns-reflector-service"]
     keep_alive true
     log_path var/"log/mdns-reflector.log"
     error_log_path var/"log/mdns-reflector.log"
