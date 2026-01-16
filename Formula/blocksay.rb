@@ -1,9 +1,8 @@
 class Blocksay < Formula
   desc "Render text as blocky ASCII art"
   homepage "https://github.com/matmartinez/blocksay"
-  url "https://github.com/matmartinez/blocksay.git",
-      using: :git,
-      revision: "fdbb65247ccae8f7ae1f4dfb7af7206c69b71d9b"
+  url "https://github.com/matmartinez/blocksay/archive/refs/tags/v0.1.0.tar.gz"
+  sha256 "856df28ef3c33a9e594e6fedc7c81d5eaec9486d3abdea0465923622f7f22b58"
   version "0.1.0"
 
   on_linux do
