@@ -43,7 +43,11 @@ class Toolsmith < Formula
     port = free_port
     pid = spawn bin/"toolsmith", "--port", port.to_s, "--cli-tools-config", testpath/"cli-tools.json"
     begin
-      sleep 2
+      30.times do
+        break if quiet_system "curl", "-sf", "http://127.0.0.1:#{port}/status"
+
+        sleep 0.5
+      end
       request = '{"jsonrpc":"2.0","id":1,"method":"tools/call",' \
                 '"params":{"name":"say","arguments":{"text":"hello brew"}}}'
       output = shell_output("curl -s -X POST http://127.0.0.1:#{port}/servers/echo/mcp " \
