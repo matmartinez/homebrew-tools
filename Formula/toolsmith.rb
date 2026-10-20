@@ -6,6 +6,12 @@ class Toolsmith < Formula
   license "MIT"
   head "https://github.com/matmartinez/toolsmith.git", branch: "main"
 
+  bottle do
+    root_url "https://ghcr.io/v2/matmartinez/tools"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_tahoe: "c6df448c3253be46b00f46ac069e11522feaa22cb34f93123d12c92a2c8bdd8e"
+  end
+
   depends_on xcode: ["16.0", :build]
   depends_on macos: :sonoma
 
