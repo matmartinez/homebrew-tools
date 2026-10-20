@@ -3,6 +3,7 @@ class Blocksay < Formula
   homepage "https://github.com/matmartinez/blocksay"
   url "https://github.com/matmartinez/blocksay/archive/refs/tags/v0.1.1.tar.gz"
   sha256 "d5a54c0a1e37aa9848becb304eeddb59263079e7ea961448566b51430a733c95"
+  license "MIT"
 
   on_linux do
     depends_on "swift" => :build
