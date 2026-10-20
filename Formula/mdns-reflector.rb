@@ -9,11 +9,9 @@ class MdnsReflector < Formula
   depends_on "cmake" => :build
 
   def install
-    mkdir "build" do
-      system "cmake", "..", "-DCMAKE_BUILD_TYPE=Release", *std_cmake_args
-      system "cmake", "--build", "."
-      system "cmake", "--install", "."
-    end
+    system "cmake", "-S", ".", "-B", "build", "-DCMAKE_BUILD_TYPE=Release", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     # Create a default config on first install (user can edit later)
     conf = etc/"mdns-reflector.conf"
